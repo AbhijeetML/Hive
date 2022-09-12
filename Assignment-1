@@ -1,0 +1,65 @@
+#Download vechile sales data -> https://github.com/shashank-mishra219/Hive-Class/blob/main/sales_order_data.csv
+
+#Store raw data into hdfs location
+   hdfs dfs -put /home/itv004004/sales/sales_order_data.csv /user/itv004004/raw
+   
+#Create a internal hive table "sales_order_csv" which will store csv data sales_order_csv .. make sure to skip header row while creating table
+
+create table sales_order_csv
+(ORDERNUMBER int,
+QUANTITYORDERED int,
+PRICEEACH double,
+ORDERLINENUMBER int,
+SALES double,
+STATUS string,
+QTR_ID int,
+MONTH_ID int,
+YEAR_ID int,
+PRODUCTLINE string,
+MSRP int,
+PRODUCTCODE string,
+PHONE string,
+CITY String,
+STATE string,
+POSTALCODE string,
+COUNTRY string,
+TERRITORY string,
+CONTACTLASTNAME string,
+CONTACTFIRSTNAME string,
+DEALSIZE string)
+row format delimited fields terminated by ","
+tblProperties("skip.header.line.count"="1");
+
+#Load data from hdfs path into "sales_order_csv" 
+
+  load data inpath "/user/itv004004/raw/sales_order_data.csv" into table sales_order_csv;
+  
+#Create an internal hive table which will store data in ORC format "sales_order_orc"
+
+create table sales_order_orc
+(ORDERNUMBER int,
+QUANTITYORDERED int,
+PRICEEACH double,
+ORDERLINENUMBER int,
+SALES double,
+STATUS string,
+QTR_ID int,
+MONTH_ID int,
+YEAR_ID int,
+PRODUCTLINE string,
+MSRP int,
+PRODUCTCODE string,
+PHONE string,
+CITY String,
+STATE string,
+POSTALCODE string,
+COUNTRY string,
+TERRITORY string,
+CONTACTLASTNAME string,
+CONTACTFIRSTNAME string,
+DEALSIZE string)
+stored as orc;
+
+#Load data from "sales_order_csv" into "sales_order_orc"
+
+insert into table sales_order_orc select * from sales_order_csv;
