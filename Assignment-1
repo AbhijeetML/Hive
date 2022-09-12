@@ -83,3 +83,14 @@ when MONTH_ID between 9 and 12 then 4
 end as qtr from sales_order_orc)
 select year_id,qtr,sum(sales) as Total_sales from top group by year_id,qtr;
 
+#In which quarter sales was minimum
+with top as (select *, case 
+when MONTH_ID between 1 and 3 then 1
+when MONTH_ID between 4 and 6 then 2
+when MONTH_ID between 7 and 9 then 3
+when MONTH_ID between 9 and 12 then 4
+end as qtr from sales_order_orc),
+top_intermediate as (select year_id,qtr,sum(sales) as Total_sales,dense_rank() over(partition by year_id order by sum(sales) asc ) as rank from top group by year_id,qtr)
+select year_id,qtr, total_sales from top_intermediate where rank=1;
+
+#In which country sales was maximum and in which country sales was minimum
