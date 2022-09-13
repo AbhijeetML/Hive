@@ -94,3 +94,7 @@ top_intermediate as (select year_id,qtr,sum(sales) as Total_sales,dense_rank() o
 select year_id,qtr, total_sales from top_intermediate where rank=1;
 
 #In which country sales was maximum and in which country sales was minimum
+
+with top as(select year_id,COUNTRY,sum(sales) as total_sales,dense_rank() over(partition by year_id order by sum(sales) desc) as max_sale ,
+dense_rank() over(partition by year_id order by sum(sales)) as min_sale from sales_order_orc group by year_id,country)
+select year_id,country,total_sales from top where max_sale=1 or min_sale=1;
